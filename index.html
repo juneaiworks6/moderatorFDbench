@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When Should a Moderator Speak?</title>
+<style>
+:root {
+  --bg:#FFFFFF; --pan:#FCFCFD; --pan2:#F4F6FA; --wave:#FFFFFF;
+  --ink:#232830; --dim:#79828F; --ln:#E7EAF0; --ln2:#F1F3F7;
+  --a:#6FA8DC; --abg:#EAF3FB; --awave:#BFD9EF;
+  --b:#AE93D6; --bbg:#F3EDFB;
+  --pro:#6CC29A; --probg:#E8F6EF;
+  --con:#EDA36F; --conbg:#FDF0E7;
+  --m:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;color-scheme:light;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;
+ font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:1160px;margin:0 auto;padding:0 32px 80px}
+@media(max-width:640px){.w{padding:0 18px 60px}}
+
+header{padding:60px 0 28px;text-align:center;border-bottom:1px solid var(--ln)}
+h1{font-size:clamp(28px,4.4vw,42px);line-height:1.14;letter-spacing:-.022em;
+ margin:0 0 9px;font-weight:660;text-wrap:balance}
+.subtitle{font-size:clamp(14px,2vw,18px);color:var(--dim);margin:0 0 22px;text-wrap:balance}
+.authors{font-size:14.5px;margin:0 0 5px}
+.au sup{color:var(--a);font-size:10px}
+.aff{font-size:13px;color:var(--dim);margin:0}
+.eq{font-size:10.5px;color:var(--dim);margin:13px 0 0}
+.draft{display:inline-block;font-family:var(--m);font-size:10px;letter-spacing:.1em;
+ text-transform:uppercase;color:var(--con);background:var(--conbg);
+ padding:3px 10px;border-radius:20px;margin-bottom:18px}
+
+h2{font-size:19px;margin:54px 0 6px;font-weight:640;letter-spacing:-.01em}
+h2 .n{font-family:var(--m);font-size:12px;color:var(--a);margin-right:10px}
+.sub{color:var(--dim);margin:0 0 18px;font-size:14.5px;max-width:72ch}
+.sub b{color:var(--ink);font-weight:600}
+
+.seats{display:flex;gap:10px;flex-wrap:wrap}
+.st{flex:1;min-width:190px;border-radius:10px;padding:13px 16px;font-size:13.5px}
+.st b{display:block;font-family:var(--m);font-size:11px;letter-spacing:.07em;margin-bottom:2px}
+.st span{color:var(--dim);font-size:12.5px}
+.st.m{background:var(--abg);color:var(--a)}
+.st.p{background:var(--probg);color:var(--pro)}
+.st.c{background:var(--conbg);color:var(--con)}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.cards{grid-template-columns:1fr}}
+.cc{background:var(--pan);border:1px solid var(--ln);border-radius:10px;padding:13px 15px}
+.cc.a{border-top:2px solid var(--a)} .cc.b{border-top:2px solid var(--b)}
+.cc .hd{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.cc .cd{font-family:var(--m);font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:4px}
+.cc.a .cd{color:var(--a);background:var(--abg)}
+.cc.b .cd{color:var(--b);background:var(--bbg)}
+.cc b{font-size:13.5px;font-weight:600}
+.cc p{margin:0;font-size:12.5px;color:var(--dim);padding-left:44px;text-indent:-44px}
+.cc p+p{margin-top:6px;padding-top:6px;border-top:1px dashed var(--ln)}
+.cc p span{display:inline-block;width:38px;margin-right:6px;text-indent:0;
+ font-family:var(--m);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+ color:var(--a);vertical-align:1px}
+.cc.b p span{color:var(--b)}
+
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+.tabs button{font:inherit;font-size:12.5px;padding:6px 14px;border-radius:20px;cursor:pointer;
+ border:1px solid var(--ln);background:var(--pan);color:var(--dim)}
+.tabs button.on{background:var(--abg);border-color:var(--a);color:var(--a);font-weight:600}
+
+.play{background:var(--pan);border:1px solid var(--ln);border-radius:12px;overflow:hidden}
+.ph{padding:17px 20px 15px;border-bottom:1px solid var(--ln2)}
+.ph h3{margin:0 0 3px;font-size:16px;font-weight:620}
+.ph p{margin:0;font-size:12px;color:var(--dim);font-family:var(--m)}
+canvas{display:block;width:100%;height:92px;margin-top:14px;cursor:pointer;
+ border-radius:8px;background:var(--wave);border:1px solid var(--ln)}
+.bar{display:flex;align-items:center;gap:13px;margin-top:11px}
+.bar button{font:inherit;width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;
+ border:0;background:var(--a);color:#fff;font-size:14px}
+.bar .tm{font-family:var(--m);font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.lg{margin-left:auto;display:flex;gap:13px;font-family:var(--m);font-size:10px;color:var(--dim)}
+.lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+
+.tr{max-height:460px;overflow-y:auto;scroll-behavior:smooth}
+.psep{font-family:var(--m);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+ color:var(--dim);padding:14px 20px 5px;border-top:1px solid var(--ln2);margin-top:5px}
+.tn{display:grid;grid-template-columns:50px 1fr;gap:12px;padding:6px 20px;cursor:pointer;
+ border-left:2px solid transparent}
+.tn:hover{background:var(--pan2)}
+.tn.on{background:var(--pan2)}
+.tn.on.MOD{border-left-color:var(--a)}
+.tn.on.PRO{border-left-color:var(--pro)}
+.tn.on.CON{border-left-color:var(--con)}
+.tn .ts{font-family:var(--m);font-size:10.5px;color:var(--dim);padding-top:3px;
+ font-variant-numeric:tabular-nums}
+.tn .bd{font-size:13.5px}
+.tn .who{font-family:var(--m);font-size:10px;font-weight:700;margin-right:7px}
+.tn.MOD .who{color:var(--a)} .tn.PRO .who{color:var(--pro)} .tn.CON .who{color:var(--con)}
+.tn.MOD .bd{font-weight:520}
+.cdg{font-family:var(--m);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;
+ margin-right:6px}
+.cdg.a{color:var(--a);background:var(--abg)} .cdg.b{color:var(--b);background:var(--bbg)}
+.due{font-family:var(--m);font-size:10px;color:var(--dim);margin-left:6px}
+.cutm{font-family:var(--m);font-size:9.5px;color:var(--con);margin-left:5px}
+
+.lbcols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.lbcols{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px;background:var(--pan);
+ border:1px solid var(--ln);border-radius:10px;overflow:hidden}
+th{text-align:left;font-family:var(--m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--dim);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--ln)}
+td{padding:9px 14px;border-bottom:1px solid var(--ln2)}
+tr:last-child td{border-bottom:0}
+td.tbd{color:var(--dim);font-family:var(--m);font-size:12px}
+.lbl{font-family:var(--m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--dim);margin:0 0 7px}
+.soon{background:var(--abg);border-radius:10px;padding:13px 16px;margin-top:14px;
+ font-size:13px;color:var(--dim)}
+.soon b{color:var(--a)}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--ln);
+ font-size:12.5px;color:var(--dim);text-align:center}
+footer a{color:var(--a)}
+</style>
+</head>
+<body>
+<div class="w">
+
+<header>
+  <span class="draft">draft · author list not final</span>
+  <h1>When Should a Moderator Speak?</h1>
+  <p class="subtitle">Benchmarking Policy-Grounded Mediation in Full-Duplex Debates</p>
+  <p class="authors"><span class="au">Dongwook Lee<sup>*</sup></span> · <span class="au">Yunjune Hwang<sup>*</sup></span> · <span class="au">Heeseung Kim</span> · <span class="au">___<sup>†</sup></span> · <span class="au">Sungroh Yoon</span></p>
+  <p class="aff">Seoul National University</p>
+  <p class="eq">* Equally contributed. &nbsp; † To be added.</p>
+</header>
+
+<h2><span class="n">01</span>The task</h2>
+<p class="sub">A full-duplex speech model takes the <b>moderator's seat</b> in a three-person debate.
+The two debaters' audio plays from start to finish and is never modified; only the moderator's
+channel is open. The model decides <b>when to speak and what to say</b> — and most of the time the
+right answer is to stay quiet.</p>
+<div class="seats">
+  <div class="st m"><b>MOD</b><span>the model under test — channel left open</span></div>
+  <div class="st p"><b>PRO</b><span>for the motion — fixed playback</span></div>
+  <div class="st c"><b>CON</b><span>against the motion — fixed playback</span></div>
+</div>
+
+<h2><span class="n">02</span>Nine moderator actions</h2>
+<p class="sub"><b>A</b> covers time and the floor, <b>B</b> covers content and only occurs in the
+crossfire. Each action has a condition that must hold; speaking without it costs points, and so does
+missing it.</p>
+<div class="cards"><div class="cc a">
+  <div class="hd"><span class="cd">A4</span><b>Ten-second cue</b></div>
+  <p class="wh"><span>when</span>A thirty-second statement passes 20 s, or the crossfire reaches 2:20.</p>
+  <p class="do"><span>say</span>Say ten seconds are left, over the speaker, without stopping them.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A2-2</span><b>Hand over after a clean finish</b></div>
+  <p class="wh"><span>when</span>The speaker finished inside thirty seconds on their own.</p>
+  <p class="do"><span>say</span>Give the floor to the other side by name, side, or “next”.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A3-1</span><b>Open the crossfire</b></div>
+  <p class="wh"><span>when</span>Both opening statements are done.</p>
+  <p class="do"><span>say</span>Announce the move to the next round and state its length.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A3-2</span><b>Open the closing round</b></div>
+  <p class="wh"><span>when</span>The crossfire has run its two and a half minutes.</p>
+  <p class="do"><span>say</span>Cut in and move the debate to the closing statements.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A1</span><b>Cut an overrun</b></div>
+  <p class="wh"><span>when</span>The last speaker of a round passes thirty seconds.</p>
+  <p class="do"><span>say</span>Stop them for time. Nobody is next, so there is no hand-off.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A2-1</span><b>Cut, then hand over</b></div>
+  <p class="wh"><span>when</span>The first speaker of a round passes thirty seconds.</p>
+  <p class="do"><span>say</span>Stop them for time and give the floor to the other side.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A5</span><b>Block an interruption</b></div>
+  <p class="wh"><span>when</span>Someone cuts into an opening or closing that is not theirs.</p>
+  <p class="do"><span>say</span>Restrain the interrupter and return the floor.</p>
+</div><div class="cc b">
+  <div class="hd"><span class="cd">B1</span><b>Back to the motion</b></div>
+  <p class="wh"><span>when</span>A speaker leaves the motion and does not come back alone.</p>
+  <p class="do"><span>say</span>Redirect them to the motion.</p>
+</div><div class="cc b">
+  <div class="hd"><span class="cd">B2</span><b>Point out a contradiction</b></div>
+  <p class="wh"><span>when</span>One speaker makes two claims that cannot both be true.</p>
+  <p class="do"><span>say</span>Name the contradiction and ask them to reconcile it. Do not rule.</p>
+</div></div>
+
+<h2><span class="n">03</span>Listen to a reference debate</h2>
+<p class="sub">Click anywhere on the waveform to jump there, or click a line in the transcript.
+Vertical marks on the waveform are the moments the moderator has to speak. Moderator lines carry
+their code and the exact second they are due.</p>
+<div class="tabs" id="tabs"></div>
+<div class="play">
+  <div class="ph">
+    <h3 id="ttl"></h3>
+    <p id="meta"></p>
+    <canvas id="wv"></canvas>
+    <div class="bar">
+      <button id="pp">▶</button>
+      <span class="tm"><span id="cur">0:00</span> / <span id="tot">0:00</span></span>
+      <span class="lg"><span><i style="background:var(--a)"></i>time &amp; floor</span>
+                       <span><i style="background:var(--b)"></i>content</span></span>
+      <audio id="au" preload="none"></audio>
+    </div>
+  </div>
+  <div class="tr" id="tr"></div>
+</div>
+
+<h2><span class="n">04</span>Model samples</h2>
+<p class="sub">What each model actually said, and when. Seats are reserved below; the moderator
+audio each model produces will be placed here next to the reference, so the two can be heard back
+to back.</p>
+<div class="lbcols">
+  <div>
+    <p class="lbl">closed source</p>
+    <table><thead><tr><th>model</th><th>sample</th><th>timing</th><th>content</th></tr></thead>
+    <tbody><tr><td>GPT Realtime</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Gemini Live</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Claude (voice)</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr></tbody></table>
+  </div>
+  <div>
+    <p class="lbl">open source</p>
+    <table><thead><tr><th>model</th><th>sample</th><th>timing</th><th>content</th></tr></thead>
+    <tbody><tr><td>Moshi</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>PersonaPlex</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Qwen3-Omni</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>MiniCPM-o</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr></tbody></table>
+  </div>
+</div>
+<div class="soon"><b>No model has been run yet.</b>
+The protocol, the rubric and the scoring code are already public — a model's moderator audio is all
+that is missing.</div>
+
+<footer>
+Data and code: <a href="https://github.com/yoonjune/debate-taxonomy-generator">debate-taxonomy-generator</a><br>
+Moderator lines are anonymised utterances from real moderated debates (IQ2 · Open to Debate · Doha ·
+Munk); only the debaters' turns are synthetic.
+</footer>
+
+</div>
+<script>
+const DATA = [{"id": "L009", "motion": "Public radio is still relevant.", "nm": {"MOD": "Margaret", "PRO": "Lionel", "CON": "Larry"}, "sec": 299.8, "rows": [{"k": "p", "n": 1}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 0.0, "e": 17.12, "x": "Today's motion is that public radio is still relevant. Lionel argues for it, and Larry argues against it. Each gets thirty seconds to open, followed by two and a half minutes of crossfire. Then each gives a thirty-second closing; I will give a ten-second cue before time expires.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 17.32, "e": 34.18, "x": "Public radio remains relevant because it serves people rather than advertisers. It offers trusted reporting, local emergencies, and thoughtful discussion that commercial outlets often neglect. Relevance is not just popularity; it is usefulness, trust, and a civic connection that still matters. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 34.38, "e": 39.46, "x": "Here's Larry to argue against public radio is still relevant in a crowded media world.", "c": "A2-2", "cut": false, "dl": 34.18}, {"k": "t", "s": "CON", "nm": "Larry", "t": 39.66, "e": 49.29, "x": "Public radio may inform, but relevance demands attention in today's crowded media world. If few people listen, how is that service still relevant to the public?", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 48.39, "e": 50.69, "x": "Because public value isn't measured by popularity alone-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 49.89, "e": 51.95, "x": "Please let him answer the question.", "c": "A5", "cut": false, "dl": 48.39}, {"k": "t", "s": "CON", "nm": "Larry", "t": 52.15, "e": 62.58, "x": "I was saying that relevance demands attention, and a service reaching only a narrow audience cannot claim broad public importance. Trust among a few does not make an outdated medium relevant to society.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 59.66, "e": 61.19, "x": "You have ten seconds.", "c": "A4", "cut": false, "dl": 59.66}, {"k": "t", "s": "CON", "nm": "Larry", "t": 62.78, "e": 70.41, "x": "Public radio may have value, but it no longer has enough public reach to remain relevant. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "p", "n": 2}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 70.61, "e": 84.25, "x": "And that concludes round one. Now, on to round two. This is where the debaters address each other directly. You get two and a half minutes from the moment I finish speaking. I will give you a ten-second warning.", "c": "A3-1", "cut": false, "dl": 70.41}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 84.45, "e": 95.57, "x": "Larry's point about limited reach confuses widespread fame with public relevance. A station can matter deeply to its listeners, especially during emergencies, because usefulness does not require everyone to tune in.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Larry", "t": 96.12, "e": 105.89, "x": "No public radio program is relevant without a mass audience. A niche service may be useful, but usefulness alone cannot make a declining medium relevant to the public.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 106.87, "e": 117.31, "x": "Consider a wildfire warning broadcast that gives isolated residents clear evacuation information when other channels fail. That direct help proves public radio remains relevant where people need dependable service.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Larry", "t": 117.76, "e": 126.9, "x": "This public radio program is relevant without a mass audience. A small emergency broadcast can matter to its listeners, but public radio still lacks broad relevance.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 127.1, "e": 137.54, "x": "One moment you're saying no public radio program is relevant without a mass audience, then you're having them this public radio program is relevant without a mass audience. Which?", "c": "B2", "cut": false, "dl": 126.9}, {"k": "t", "s": "CON", "nm": "Larry", "t": 137.74, "e": 148.04, "x": "I mean relevance to public life requires mass reach, while this particular program can be relevant to a narrow group. Both claims stand, and public radio remains broadly irrelevant.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 148.72, "e": 159.85, "x": "People also enjoy radio's slower pace and familiar voices, which can make daily routines feel less isolated. But whether the format feels old-fashioned is secondary: public radio still meets real public needs.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Larry", "t": 160.8, "e": 171.85, "x": "Lionel's point about familiar voices is personal comfort, not public relevance. Many services feel comforting without earning a place in public life, and radio's declining reach means its civic role is-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 170.95, "e": 180.96, "x": "Comfort is not my claim; public service is. When residents need clear local information, a familiar station can reach them immediately, so limited reach does not erase relevance.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Larry", "t": 181.35, "e": 194.15, "x": "Imagine a station repeating a town meeting to a tiny, aging audience while most residents get news elsewhere. That broadcast preserves a habit, not a meaningful public role, proving public radio is no longer broadly relevant.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 194.88, "e": 206.36, "x": "I grant that public radio does not reach everyone, but that is a smaller point than whether it serves people well. Its dependable local reporting and open discussion show it remains relevant.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Larry", "t": 207.33, "e": 218.54, "x": "Yes, some listeners value those programs, but that does not establish public relevance. A service can help its loyal audience while failing to matter across the public, which is the central issue.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 219.39, "e": 227.77, "x": "If a trusted broadcast informs people during a local crisis, what exactly makes that public service irrelevant simply because commercial media reaches more listeners?", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 224.25, "e": 226.18, "x": "You both have ten seconds.", "c": "A4", "cut": false, "dl": 224.25}, {"k": "t", "s": "CON", "nm": "Larry", "t": 228.55, "e": 237.75, "x": "The crisis example exaggerates an occasional benefit. Emergency information can come through many channels, while ordinary public-", "c": null, "cut": true, "dl": null}, {"k": "p", "n": 3}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 234.25, "e": 242.81, "x": "That's time. Round three, closing statements by each debater in turn. Let's go to the first of these speakers. Speaking for the motion, Lionel.", "c": "A3-2", "cut": false, "dl": 234.25}, {"k": "t", "s": "PRO", "nm": "Lionel", "t": 243.01, "e": 261.99, "x": "Public radio is not relevant merely because it is old, and it is not irrelevant merely because it is smaller. Its value appears when people need careful reporting, local warnings, and conversation without commercial pressure. Those services remain useful and trusted, so public radio is still relevant. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 262.19, "e": 264.43, "x": "I'm going to let Larry answer.", "c": "A2-2", "cut": false, "dl": 261.99}, {"k": "t", "s": "CON", "nm": "Larry", "t": 264.63, "e": 284.74, "x": "Lionel's strongest example is an emergency broadcast, but an occasional rescue cannot define an entire medium. Most programming competes for a small audience in a crowded world, while people increasingly use faster and wider channels. Public radio may help dedicated listeners, yet that limited usefulness is not the same as continuing public relevance.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 284.63, "e": 285.87, "x": "Ten seconds warning.", "c": "A4", "cut": false, "dl": 284.63}, {"k": "t", "s": "CON", "nm": "Larry", "t": 284.94, "e": 298.13, "x": "A medium that reaches fewer people and struggles to shape common discussion may retain loyal fans, but loyalty is not broad relevance. Public radio has-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 295.13, "e": 295.65, "x": "Time.", "c": "A1", "cut": false, "dl": 294.63}, {"k": "t", "s": "MOD", "nm": "Margaret", "t": 295.85, "e": 299.8, "x": "Thank you both for taking part; this debate is now closed.", "c": null, "cut": false, "dl": null}], "pk": [0.745, 0.435, 0.465, 0.408, 0.308, 0.482, 0.204, 0.01, 0.678, 0.667, 0.222, 0.367, 0.363, 0.37, 0.448, 0.631, 0.577, 0.435, 0.731, 0.437, 0.373, 0.506, 0.429, 0.036, 0.573, 0.496, 0.499, 0.313, 0.668, 0.443, 0.464, 0.305, 0.311, 0.471, 0.304, 0.364, 0.429, 0.469, 0.355, 0.271, 0.378, 0.458, 0.177, 0.512, 0.398, 0.376, 0.3, 0.25, 0.332, 0.364, 0.441, 0.511, 0.351, 0.425, 0.414, 0.367, 0.297, 0.394, 0.217, 0.31, 0.35, 0.491, 0.299, 0.421, 0.394, 0.402, 0.115, 0.024, 0.214, 0.393, 0.532, 0.319, 0.341, 0.314, 0.387, 0.553, 0.739, 0.274, 0.178, 0.623, 0.544, 0.364, 0.384, 0.453, 0.368, 0.294, 0.198, 0.424, 0.348, 0.193, 0.283, 0.376, 0.163, 0.603, 0.452, 0.337, 0.436, 0.532, 0.5, 0.389, 0.459, 0.45, 0.248, 0.384, 0.516, 0.338, 0.433, 0.343, 0.204, 0.3, 0.306, 0.437, 0.464, 0.539, 0.544, 0.234, 0.02, 0.743, 0.489, 0.789, 0.569, 0.525, 0.39, 0.265, 0.342, 0.597, 0.63, 0.428, 0.549, 0.517, 0.549, 0.481, 0.534, 0.483, 0.228, 0.347, 0.44, 0.0, 0.473, 0.557, 0.177, 0.592, 0.395, 0.348, 0.205, 0.003, 0.556, 0.368, 0.242, 0.01, 0.38, 0.369, 0.258, 0.352, 0.431, 0.432, 0.002, 0.347, 0.52, 0.551, 0.157, 0.527, 0.293, 0.239, 0.615, 0.38, 0.359, 0.412, 0.128, 0.423, 0.362, 0.536, 0.293, 0.251, 0.528, 0.326, 0.324, 0.251, 0.289, 0.512, 0.32, 0.243, 0.415, 0.29, 0.27, 0.058, 0.283, 0.332, 0.474, 0.34, 0.242, 0.093, 0.748, 0.79, 0.442, 0.342, 0.513, 0.506, 0.428, 0.324, 0.333, 0.391, 0.21, 0.272, 0.277, 0.321, 0.478, 0.292, 0.431, 0.472, 0.435, 0.505, 0.0, 0.0, 0.45, 0.546, 0.366, 0.327, 0.413, 0.455, 0.312, 0.54, 0.257, 0.271, 0.444, 0.347, 0.422, 0.454, 0.227, 0.498, 0.398, 0.362, 0.3, 0.338, 0.223, 0.076, 0.557, 0.386, 0.395, 0.474, 0.578, 0.469, 0.192, 0.335, 0.49, 0.481, 0.457, 0.213, 0.202, 0.51, 0.377, 0.489, 0.39, 0.105, 0.74, 0.382, 0.483, 0.491, 0.401, 0.299, 0.613, 0.461, 0.351, 0.108, 0.499, 0.578, 0.539, 0.485, 0.351, 0.385, 0.538, 0.4, 0.386, 0.033, 0.594, 0.115, 0.413, 0.738, 0.677, 0.489, 0.393, 0.379, 0.405, 0.301, 0.36, 0.517, 0.338, 0.409, 0.15, 0.737, 0.463, 0.5, 0.394, 0.298, 0.532, 0.413, 0.0, 0.321, 0.355, 0.375, 0.327, 0.328, 0.272, 0.267, 0.359, 0.363, 0.301, 0.315, 0.16, 0.492, 0.477, 0.302, 0.464, 0.404, 0.633, 0.5, 0.322, 0.34, 0.406, 0.081, 0.0, 0.0, 0.63, 0.775, 0.391, 0.426, 0.325, 0.284, 0.379, 0.372, 0.281, 0.341, 0.336, 0.387, 0.436, 0.364, 0.345, 0.348, 0.427, 0.416, 0.246, 0.235, 0.559, 0.567, 0.445, 0.07, 0.311, 0.381, 0.248, 0.321, 0.335, 0.246, 0.356, 0.267, 0.23, 0.407, 0.235, 0.325, 0.371, 0.507, 0.266, 0.173, 0.045, 0.69, 0.325, 0.309, 0.314, 0.25, 0.287, 0.495, 0.35, 0.455, 0.308, 0.361, 0.36, 0.813, 0.595, 0.69, 0.597, 0.252, 0.401, 0.415, 0.23, 0.428, 0.456, 0.374, 0.503, 0.371, 0.072, 0.0, 0.372, 0.511, 0.476, 0.467, 0.359, 0.508, 0.272, 0.48, 0.54, 0.337, 0.372, 0.285, 0.271, 0.112, 0.449, 0.566, 0.363, 0.33, 0.333, 0.383, 0.182, 0.47, 0.344, 0.0, 0.0, 0.602, 0.506, 0.521, 0.795, 0.42, 0.283, 0.697, 0.601, 0.49, 0.391, 0.361, 0.57, 0.433, 0.438, 0.494, 0.366, 0.418, 0.402, 0.379, 0.195, 0.181, 0.259, 0.004, 0.0, 0.389, 0.444, 0.322, 0.231, 0.278, 0.399, 0.431, 0.525, 0.402, 0.415, 0.609, 0.423, 0.621, 0.285, 0.377, 0.229, 0.187, 0.0, 0.233, 0.802, 0.364, 0.463, 0.367, 0.381, 0.361, 0.451, 0.3, 0.326, 0.352, 0.497, 0.468, 0.357, 1.0, 0.621, 0.51, 0.449, 0.433, 0.163, 0.33, 0.52, 0.282, 0.16, 0.046, 0.625, 0.365, 0.657, 0.2, 0.445, 0.425, 0.466, 0.287, 0.341, 0.336, 0.322, 0.428, 0.399, 0.337, 0.341, 0.283, 0.395, 0.499, 0.298, 0.358, 0.272, 0.333, 0.373, 0.372, 0.379, 0.266, 0.439, 0.337, 0.073, 0.427, 0.385, 0.286, 0.306, 0.214, 0.394, 0.354, 0.293, 0.369, 0.394, 0.403, 0.033, 0.214, 0.173, 0.451, 0.256, 0.238, 0.425, 0.113, 0.741, 0.551, 0.333, 0.341, 0.319, 0.307, 0.316, 0.408, 0.456, 0.357, 0.356, 0.424, 0.165, 0.558, 0.445, 0.259, 0.594, 0.434, 0.459, 0.434, 0.331, 0.256, 0.527, 0.398, 0.295, 0.204, 0.665, 0.466, 0.658, 0.295, 0.337, 0.503, 0.403, 0.245, 0.408, 0.279, 0.28, 0.367, 0.361, 0.228, 0.515, 0.515, 0.251, 0.356, 0.221, 0.454, 0.311, 0.346, 0.36, 0.091, 0.469, 0.46, 0.306, 0.019, 0.693, 0.567, 0.449, 0.407, 0.088, 0.0, 0.83, 0.516, 0.792, 0.602, 0.577, 0.553, 0.598, 0.311, 0.343, 0.445]}, {"id": "L110", "motion": "Mass collection of U.S. phone records violates the Fourth Amendment", "nm": {"MOD": "Victor", "PRO": "Karen", "CON": "Amy"}, "sec": 301.2, "rows": [{"k": "p", "n": 1}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 0.0, "e": 20.23, "x": "Welcome. Tonight's motion is: mass collection of U.S. phone records violates the Fourth Amendment. Karen argues for it, and Amy argues against it. Each has thirty seconds to open, followed by two and a half minutes of crossfire, then thirty-second closings; I will give a ten-second cue. Please address each other directly and stay with the motion.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 20.43, "e": 39.21, "x": "Mass collection turns private patterns into a permanent map of ordinary life. The Fourth Amendment protects people from broad government searches, not merely from officers touching a phone. When officials gather everyone's calling history before suspicion, they search first and justify later. That reverses the constitutional safeguard. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 39.41, "e": 42.86, "x": "All right, let's give Amy a chance to reply.", "c": "A2-2", "cut": false, "dl": 39.21}, {"k": "t", "s": "CON", "nm": "Amy", "t": 43.06, "e": 52.75, "x": "Phone records are routing facts held by service companies, not the content of anyone's conversation. The government may examine those records under lawful process.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 51.85, "e": 54.15, "x": "But that label misses the harm: a list-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 53.35, "e": 55.6, "x": "No. Let Amy come in. Please.", "c": "A5", "cut": false, "dl": 51.85}, {"k": "t", "s": "CON", "nm": "Amy", "t": 55.8, "e": 65.57, "x": "rather than private papers. That limited review is not a search of a person's private life at all under the amendment as written today.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 63.06, "e": 63.95, "x": "Well, now ten.", "c": "A4", "cut": false, "dl": 63.06}, {"k": "t", "s": "CON", "nm": "Amy", "t": 65.77, "e": 73.66, "x": "The amendment restrains unreasonable searches, and obtaining company-held routing data reasonably does not violate it. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "p", "n": 2}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 73.86, "e": 86.82, "x": "Now we move on to round two. And round two is where the debaters address each other in turn. You get two and a half minutes from the moment I finish speaking. I will give you a ten-second warning.", "c": "A3-1", "cut": false, "dl": 73.66}, {"k": "t", "s": "CON", "nm": "Amy", "t": 87.02, "e": 95.99, "x": "Karen says collection reverses safeguards, but records already exist for billing and connection. Receiving them does not enter a home, read speech, or seize a device.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 96.53, "e": 106.44, "x": "The real protection is building strict limits on who may use records, how long agencies retain them, and whether workers face discipline for misuse. Strong oversight prevents abuse.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 106.64, "e": 114.73, "x": "Can we please go back to the question at hand? We're going to go back to the question at issue.", "c": "B1", "cut": false, "dl": 106.44}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 114.93, "e": 124.89, "x": "The question is whether mass collection itself violates the Fourth Amendment, and it does because it gathers intimate associations without individualized cause. Oversight cannot erase an unconstitutional search.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Amy", "t": 125.64, "e": 136.21, "x": "Public trust also suffers when secret programs operate without clear notice, though public confidence alone is not the legal test. The legal question remains search, and collection is not one.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 136.66, "e": 147.1, "x": "Amy's point that collection is not a search ignores what the government learns by combining records: relationships, routines, and vulnerable moments. That is exactly the privacy the amendment shields.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Amy", "t": 147.69, "e": 157.78, "x": "No collection of phone records violates the Fourth Amendment. A record of numbers and times is a company document, so receiving it does not invade a person's protected space.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 158.01, "e": 167.65, "x": "Amy's absolute claim fails because mass collection is not simply receiving one company's document. It creates a detailed portrait of every person's associations, which is the invasion.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Amy", "t": 168.33, "e": 178.82, "x": "This collection of phone records violates the Fourth Amendment. When officials sweep up everyone's patterns, the program becomes too broad, yet the amendment still does not forbid all routine records.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 179.02, "e": 187.99, "x": "So it's not much of no collection of phone records violates the Fourth Amendment if this collection of phone records violates the Fourth Amendment, is it?", "c": "B2", "cut": false, "dl": 178.82}, {"k": "t", "s": "CON", "nm": "Amy", "t": 188.19, "e": 198.76, "x": "My first statement addresses ordinary acquisition, while my second addresses this vast program's practical reach. A rule can recognize records as nonprivate yet condemn an agency's careless handling of them.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 199.26, "e": 210.02, "x": "No, those statements cannot both define the law, because her first leaves no room for this program. Amy now admits scale changes the privacy invasion, which shows mass collection is-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "CON", "nm": "Amy", "t": 209.12, "e": 219.21, "x": "Scale does not transform a business record into private content, and that is the mistake. A warehouse may hold many ordinary files without each file becoming a constitutional search.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 219.91, "e": 229.5, "x": "I agree content deserves especially strong protection, but metadata can reveal nearly as much through patterns. The government's decision to gather it indiscriminately violates the Fourth Amendment.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 226.82, "e": 228.35, "x": "Ten seconds, ten seconds.", "c": "A4", "cut": false, "dl": 226.82}, {"k": "t", "s": "CON", "nm": "Amy", "t": 230.25, "e": 239.94, "x": "Karen's pattern claim assumes inference equals a search, but an inference is not entry into private life. The amendment regulates government searches-", "c": null, "cut": true, "dl": null}, {"k": "p", "n": 3}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 236.82, "e": 244.35, "x": "That's time. Now we move on to round three. Karen will go first, arguing for the resolution. Karen, the floor is yours.", "c": "A3-2", "cut": false, "dl": 236.82}, {"k": "t", "s": "PRO", "nm": "Karen", "t": 244.55, "e": 263.69, "x": "Phone records are not empty labels. In bulk, they reveal who we rely on, where our lives turn, and what associations we keep. The amendment requires a reason before government builds that map, not a promise to use it carefully afterward. Mass collection therefore violates the Fourth Amendment. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 263.89, "e": 266.22, "x": "Amy, you have the last word.", "c": "A2-2", "cut": false, "dl": 263.69}, {"k": "t", "s": "CON", "nm": "Amy", "t": 266.42, "e": 286.35, "x": "Karen treats useful patterns as if they were private papers, but the amendment's line is government intrusion into protected life. Phone companies create routing records to connect calls, and lawful access to those records does not inspect conversation or enter a home. The real danger is giving constitutional labels to every administrative record, because that would.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 286.42, "e": 290.27, "x": "I'll give you ten more seconds to nail this.", "c": "A4", "cut": false, "dl": 286.42}, {"k": "t", "s": "CON", "nm": "Amy", "t": 286.55, "e": 294.36, "x": "freeze ordinary investigations, even when officials seek only routing facts, not anyone's words or private space. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "Victor", "t": 294.56, "e": 301.21, "x": "Thank you both for a thoughtful debate. This concludes our discussion of mass collection and the Fourth Amendment.", "c": null, "cut": false, "dl": null}], "pk": [0.325, 0.005, 0.277, 0.466, 0.214, 0.486, 0.5, 0.449, 0.448, 0.572, 0.385, 0.188, 0.461, 0.415, 0.398, 0.303, 0.269, 0.273, 0.376, 0.521, 0.336, 0.425, 0.398, 0.383, 0.285, 0.463, 0.313, 0.406, 0.336, 0.319, 0.48, 0.409, 0.433, 0.224, 0.044, 0.323, 0.539, 0.429, 0.391, 0.205, 0.231, 0.82, 0.24, 0.704, 0.364, 0.385, 0.436, 0.429, 0.41, 0.633, 0.56, 0.304, 0.664, 0.338, 0.056, 0.661, 0.44, 0.344, 0.273, 0.355, 0.458, 0.47, 0.323, 0.434, 0.408, 0.314, 0.515, 0.396, 0.328, 1.0, 0.568, 0.332, 0.34, 0.478, 0.001, 0.763, 0.494, 0.178, 0.493, 0.478, 0.004, 0.443, 0.307, 0.18, 0.323, 0.003, 0.713, 0.835, 0.627, 0.45, 0.611, 0.311, 0.174, 0.701, 0.461, 0.42, 0.362, 0.224, 0.73, 0.511, 0.604, 0.419, 0.392, 0.809, 0.956, 0.33, 0.347, 0.165, 0.297, 0.201, 0.055, 0.738, 0.509, 0.351, 0.192, 0.165, 0.821, 0.443, 0.634, 0.616, 0.488, 0.432, 0.343, 0.607, 0.444, 0.4, 0.455, 0.356, 0.44, 0.413, 0.037, 0.745, 0.624, 0.426, 0.415, 0.428, 0.39, 0.426, 0.378, 0.338, 0.357, 0.506, 0.028, 0.605, 0.505, 0.23, 0.023, 0.419, 0.421, 0.312, 0.169, 0.007, 0.383, 0.445, 0.361, 0.497, 0.378, 0.268, 0.168, 0.003, 0.116, 0.521, 0.482, 0.26, 0.238, 0.177, 0.013, 0.002, 0.463, 0.473, 0.414, 0.601, 0.178, 0.859, 0.62, 0.637, 0.604, 0.414, 0.537, 0.494, 0.374, 0.342, 0.258, 0.334, 0.427, 0.434, 0.482, 0.444, 0.507, 0.483, 0.473, 0.014, 0.412, 0.519, 0.401, 0.53, 0.355, 0.417, 0.476, 0.551, 0.341, 0.319, 0.202, 0.567, 0.437, 0.397, 0.252, 0.029, 0.591, 0.427, 0.449, 0.298, 0.203, 0.232, 0.631, 0.543, 0.21, 0.44, 0.454, 0.447, 0.138, 0.001, 0.376, 0.591, 0.163, 0.465, 0.348, 0.386, 0.008, 0.807, 0.425, 0.484, 0.489, 0.24, 0.327, 0.42, 0.473, 0.406, 0.312, 0.28, 0.316, 0.277, 0.398, 0.79, 0.459, 0.636, 0.382, 0.311, 0.3, 0.0, 0.443, 0.625, 0.517, 0.375, 0.52, 0.472, 0.59, 0.389, 0.013, 0.856, 0.538, 0.517, 0.5, 0.282, 0.054, 0.558, 0.504, 0.565, 0.598, 0.348, 0.503, 0.011, 0.363, 0.552, 0.339, 0.401, 0.369, 0.296, 0.487, 0.517, 0.447, 0.296, 0.496, 0.401, 0.321, 0.234, 0.283, 0.238, 0.703, 0.775, 0.572, 0.25, 0.222, 0.0, 0.713, 0.512, 0.547, 0.634, 0.57, 0.357, 0.193, 0.866, 0.557, 0.377, 0.306, 0.515, 0.272, 0.539, 0.458, 0.592, 0.473, 0.45, 0.328, 0.54, 0.341, 0.843, 0.288, 0.321, 0.356, 0.349, 0.296, 0.298, 0.292, 0.451, 0.118, 0.439, 0.543, 0.599, 0.336, 0.352, 0.267, 0.324, 0.383, 0.272, 0.0, 0.391, 0.71, 0.523, 0.629, 0.395, 0.269, 0.517, 0.464, 0.696, 0.709, 0.464, 0.418, 0.542, 0.405, 0.748, 0.635, 0.561, 0.383, 0.386, 0.43, 0.313, 0.007, 0.59, 0.556, 0.409, 0.529, 0.304, 0.135, 0.506, 0.206, 0.107, 0.005, 0.318, 0.506, 0.245, 0.276, 0.315, 0.158, 0.081, 0.005, 0.691, 0.784, 0.502, 0.476, 0.459, 0.593, 0.425, 0.632, 0.403, 0.612, 0.274, 0.665, 0.574, 0.514, 0.487, 0.6, 0.517, 0.578, 0.411, 0.392, 0.339, 0.0, 0.372, 0.113, 0.502, 0.537, 0.411, 0.31, 0.27, 0.323, 0.324, 0.401, 0.214, 0.471, 0.501, 0.403, 0.355, 0.752, 0.261, 0.197, 0.452, 0.894, 0.771, 0.424, 0.48, 0.401, 0.335, 0.307, 0.514, 0.455, 0.262, 0.921, 0.603, 0.481, 0.423, 0.414, 0.498, 0.448, 0.32, 0.219, 0.404, 0.079, 0.0, 0.551, 0.372, 0.274, 0.437, 0.372, 0.377, 0.482, 0.352, 0.267, 0.27, 0.359, 0.764, 0.909, 0.532, 0.437, 0.657, 0.565, 0.287, 0.368, 0.0, 0.279, 0.697, 0.39, 0.465, 0.381, 0.436, 0.583, 0.654, 0.508, 0.398, 0.334, 0.02, 0.848, 0.573, 0.843, 0.527, 0.689, 0.42, 0.527, 0.375, 0.517, 0.449, 0.531, 0.378, 0.259, 0.43, 0.47, 0.365, 0.015, 0.774, 0.44, 0.481, 0.323, 0.316, 0.596, 0.374, 0.273, 0.514, 0.128, 0.714, 0.274, 0.41, 0.302, 0.199, 0.137, 0.626, 0.547, 0.372, 0.552, 0.365, 0.46, 0.469, 0.731, 0.209, 0.386, 0.469, 0.115, 0.707, 0.463, 0.379, 0.662, 0.356, 0.292, 0.016, 0.769, 0.494, 0.387, 0.28, 0.211, 0.452, 0.368, 0.199, 0.591, 0.492, 0.391, 0.261, 0.415, 0.541, 0.212, 0.46, 0.704, 0.594, 0.545, 0.277, 0.395, 0.304, 0.746, 0.599, 0.615, 0.494, 0.347, 0.42, 0.405, 0.641, 0.423, 0.422, 0.551, 0.45, 0.409, 0.372, 0.364, 0.097, 0.677, 0.529, 0.422, 0.453, 0.463, 0.499, 0.459, 0.221, 0.787, 0.759, 0.284, 0.733, 0.532, 0.83, 0.544, 0.393, 0.518, 0.5, 0.483, 0.526, 0.435, 0.574, 0.017, 0.608, 0.502, 0.194, 0.015, 0.552, 0.506, 0.229, 0.009, 0.171, 0.406, 0.402, 0.536, 0.335, 0.404, 0.196, 0.456, 0.173]}, {"id": "L059", "motion": "Humanitarian Intervention Does More Harm Than Good", "nm": {"MOD": "David", "PRO": "Betsy", "CON": "Annette"}, "sec": 299.6, "rows": [{"k": "p", "n": 1}, {"k": "t", "s": "MOD", "nm": "David", "t": 0.0, "e": 16.73, "x": "Welcome. Tonight's motion is Humanitarian Intervention Does More Harm Than Good. Betsy supports the motion; Annette opposes it. Each has thirty seconds for an opening, followed by two and a half minutes of crossfire. Then each has thirty seconds to close. I will give a ten-second cue.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 16.93, "e": 33.65, "x": "Humanitarian intervention promises rescue, yet it hands grave power to outsiders who cannot own the aftermath. Force can topple a threat while breaking local order and making civilians targets. Because interventions regularly widen violence and dependence, they do more harm than good. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 33.85, "e": 36.26, "x": "Annette has the floor right now.", "c": "A2-2", "cut": false, "dl": 33.65}, {"k": "t", "s": "CON", "nm": "Annette", "t": 36.46, "e": 54.4, "x": "Doing nothing is also a choice, and it can leave people exposed to immediate violence. Intervention need not mean conquest: requested, limited protection can create room for local recovery. Because carefully bounded action can prevent catastrophe, it does not do more harm than good. That's all, thank you.", "c": null, "cut": false, "dl": null}, {"k": "p", "n": 2}, {"k": "t", "s": "MOD", "nm": "David", "t": 54.6, "e": 67.22, "x": "That concludes round one. Now on to round two where the debaters address each other directly. This round runs two and a half minutes from the moment I finish. I will call ten seconds before the end.", "c": "A3-1", "cut": false, "dl": 54.4}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 67.42, "e": 77.42, "x": "Annette says careful intervention can protect civilians. But outside forces misread local conflicts, empower armed partners, and leave shattered institutions behind; good intentions do not erase predictable harm.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 77.93, "e": 87.21, "x": "Your claim that outsiders inevitably misread conflicts is weakest: local people can request protection and help guide it. Refusing them assistance because errors might occur abandons-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 86.31, "e": 95.67, "x": "No, refusing reckless force is not refusing people. Your requested-protection point ignores who gets recognized as local voices; intervention often selects allies, then deepens the conflict.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 96.45, "e": 106.09, "x": "When a genuine local coalition requests limited protection and outsiders accept strict oversight, intervention can save lives. Why should civilians lose that option because past missions failed?", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 106.45, "e": 116.09, "x": "They should not lose protection, but your premise treats military intervention as the only option. Oversight cannot control foreign commanders once violence starts, so limited missions expand.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 116.3, "e": 127.34, "x": "Imagine armed groups surrounding a neighborhood while residents ask for a protected exit. Outside forces secure the route, families leave safely, and attackers retreat. That proves intervention can prevent immediate harm.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 127.83, "e": 137.55, "x": "Your protected-exit point assumes outsiders can secure a route without becoming combatants. Once they fight attackers, civilians face reprisals and dependency, so temporary rescue can multiply danger.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 138.48, "e": 148.04, "x": "The larger problem is how receiving communities handle people fleeing violence. Fair entry rules, housing, schools, and work permits determine whether displaced families can rebuild stable lives.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 148.24, "e": 154.57, "x": "Please address the issue that I did raise, which is whether humanitarian intervention does more harm than good.", "c": "B1", "cut": false, "dl": 148.04}, {"k": "t", "s": "CON", "nm": "Annette", "t": 154.77, "e": 165.05, "x": "On whether intervention does more harm than good, it does not when protection is requested and constrained. Those safeguards can stop slaughter without replacing local leadership or permanent occupation.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 165.54, "e": 174.86, "x": "Long-term aid also matters, because clinics and schools shape recovery after violence. But aid cannot undo the coercion intervention creates, so the motion remains true overall.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 175.68, "e": 185.6, "x": "Intervention is often the only rapid shield against organized violence, and it need not become occupation. Careful limits protect people while preserving the local authority that must endure.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 186.46, "e": 196.62, "x": "Consider outsiders arming a militia to defend a town. The militia drives out rivals, revenge follows, and civilians flee; that chain shows intervention can create more harm than safety.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "CON", "nm": "Annette", "t": 197.04, "e": 206.96, "x": "Your armed-militia example attacks reckless support, not every intervention. With verified local partners, civilian rules, and a narrow rescue goal, protection avoids that spiral and delivers more good.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 207.22, "e": 207.82, "x": "Ten.", "c": "A4", "cut": false, "dl": 207.22}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 207.81, "e": 217.45, "x": "The weakest word is verified. Outsiders cannot reliably verify partners during chaos, and your civilian rules mean little when foreign troops decide threats; uncertainty makes harm foreseeable.", "c": null, "cut": false, "dl": null}, {"k": "p", "n": 3}, {"k": "t", "s": "MOD", "nm": "David", "t": 217.22, "e": 225.39, "x": "Time. First, onto round three, closing statements from each debater in turn. First, to summarize her position in favor of the motion, Betsy.", "c": "A3-2", "cut": false, "dl": 217.22}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 225.59, "e": 245.67, "x": "Annette rightly says people facing attack deserve protection. But her answer assumes outsiders can deliver force with knowledge, restraint, and a clean exit. They usually alter local power, invite retaliation, and leave dependence after headlines fade. The humane instinct is real, yet predictable disruption makes intervention a harmful tool that", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 245.59, "e": 247.68, "x": "Ten seconds for last word.", "c": "A4", "cut": false, "dl": 245.59}, {"k": "t", "s": "PRO", "nm": "Betsy", "t": 245.87, "e": 259.09, "x": "cannot be safely managed from afar. Choose diplomacy, refuge, and local relief before sending armed outsiders, because those tools support people without taking control of their future. When a rescue-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 256.09, "e": 260.1, "x": "You're out of time. And here to summarize her position, Annette.", "c": "A2-1", "cut": false, "dl": 255.59}, {"k": "t", "s": "CON", "nm": "Annette", "t": 260.3, "e": 280.62, "x": "Betsy's strongest warning is that force can empower bad partners and trigger retaliation. That danger demands restraint, but it does not prove every intervention harms more than it helps. Abandoning people during immediate attack also changes power, usually for the attacker. With local request, narrow protection, oversight, and exit plans, intervention can prevent suffering and preserve recovery.", "c": null, "cut": false, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 280.3, "e": 282.31, "x": "Ten seconds from this side?", "c": "A4", "cut": false, "dl": 280.3}, {"k": "t", "s": "CON", "nm": "Annette", "t": 280.82, "e": 293.8, "x": "from the crisis. That is not a promise of perfection; it is a duty to reduce the worst danger when action can be bounded and checked by those it protects. Refusing-", "c": null, "cut": true, "dl": null}, {"k": "t", "s": "MOD", "nm": "David", "t": 290.8, "e": 293.33, "x": "Thank you, Annette. Your time is up.", "c": "A1", "cut": false, "dl": 290.3}, {"k": "t", "s": "MOD", "nm": "David", "t": 293.53, "e": 299.62, "x": "Thank you, Betsy and Annette, for a thoughtful debate; this concludes our discussion of the motion tonight here.", "c": null, "cut": false, "dl": null}], "pk": [0.75, 0.686, 0.533, 0.446, 0.432, 0.396, 0.577, 0.511, 0.289, 0.568, 0.422, 0.583, 0.386, 0.871, 0.478, 0.549, 0.648, 0.471, 0.49, 0.581, 0.667, 0.645, 0.306, 0.609, 0.514, 0.722, 0.56, 0.527, 0.421, 0.812, 0.563, 0.387, 0.348, 0.012, 0.605, 0.421, 0.519, 0.564, 0.768, 0.787, 0.566, 0.814, 0.631, 0.55, 0.603, 0.695, 0.389, 0.79, 0.747, 0.562, 0.363, 0.367, 0.287, 0.587, 0.21, 0.447, 0.759, 0.399, 0.857, 0.722, 0.3, 0.349, 0.346, 0.291, 0.531, 0.659, 0.441, 0.003, 0.477, 0.505, 0.899, 0.412, 0.115, 0.515, 0.423, 0.513, 0.391, 0.358, 0.307, 0.365, 0.242, 0.494, 0.152, 0.398, 0.573, 0.56, 0.399, 0.265, 0.76, 0.606, 0.386, 0.3, 0.389, 0.472, 0.222, 0.704, 0.593, 0.479, 0.501, 0.442, 0.325, 0.413, 0.497, 0.588, 0.053, 0.923, 0.59, 0.421, 0.132, 0.853, 0.547, 0.656, 0.298, 0.821, 0.491, 0.441, 0.615, 0.867, 0.51, 0.648, 0.646, 0.015, 0.611, 0.832, 0.51, 0.598, 0.29, 0.473, 0.172, 0.905, 0.543, 0.602, 0.337, 0.314, 0.073, 0.572, 0.837, 0.634, 0.489, 0.361, 0.845, 0.734, 0.542, 0.586, 0.503, 0.855, 0.657, 0.227, 0.657, 0.395, 0.394, 0.571, 0.706, 0.407, 0.421, 0.0, 0.883, 0.532, 0.45, 0.459, 0.311, 0.375, 0.306, 0.815, 0.623, 0.378, 0.347, 0.361, 0.724, 0.408, 0.446, 0.364, 0.588, 0.721, 0.642, 0.528, 0.565, 0.374, 0.451, 0.727, 0.532, 0.394, 0.487, 0.348, 0.35, 0.583, 0.615, 0.571, 0.761, 0.436, 0.369, 0.183, 0.0, 0.654, 0.535, 0.382, 0.397, 0.408, 0.304, 0.53, 0.286, 0.301, 0.312, 0.234, 0.458, 0.016, 0.864, 0.448, 0.701, 0.311, 0.623, 0.388, 0.117, 0.385, 0.686, 0.405, 0.676, 0.573, 0.369, 0.4, 0.22, 0.37, 0.503, 0.678, 0.637, 0.354, 0.252, 0.527, 0.426, 0.587, 0.355, 0.367, 0.095, 0.665, 0.47, 0.402, 0.311, 0.474, 0.37, 0.297, 0.247, 0.796, 0.614, 0.289, 0.631, 0.326, 0.3, 0.443, 0.573, 0.259, 0.558, 0.487, 0.36, 0.357, 0.232, 0.0, 0.619, 0.88, 0.367, 0.785, 0.716, 0.373, 0.729, 0.792, 0.606, 0.7, 0.845, 0.494, 0.412, 0.791, 0.294, 0.37, 0.377, 0.363, 0.27, 0.199, 0.0, 0.834, 0.882, 0.671, 0.271, 0.227, 0.322, 0.281, 0.564, 0.433, 0.231, 0.597, 0.239, 0.453, 0.26, 0.405, 0.323, 0.309, 0.399, 0.573, 0.301, 0.405, 0.548, 0.645, 0.853, 0.698, 0.218, 0.418, 0.405, 0.297, 0.526, 0.605, 0.429, 0.033, 0.763, 0.383, 0.459, 0.328, 0.48, 0.525, 0.364, 0.224, 0.395, 0.2, 0.274, 0.803, 0.752, 0.676, 0.568, 0.637, 0.373, 0.308, 0.265, 0.346, 0.227, 0.657, 0.797, 0.681, 0.24, 0.521, 0.244, 0.403, 0.616, 0.392, 0.007, 0.614, 0.589, 0.314, 0.307, 0.244, 0.416, 0.365, 0.263, 0.327, 0.0, 0.008, 0.486, 0.816, 0.317, 0.728, 0.269, 0.264, 0.416, 0.499, 0.432, 0.305, 0.198, 0.606, 0.697, 0.388, 0.517, 0.474, 0.394, 0.277, 0.279, 0.248, 0.0, 0.278, 0.681, 0.599, 0.488, 0.392, 0.382, 0.372, 0.565, 0.632, 0.597, 0.591, 0.455, 0.362, 0.0, 0.533, 0.547, 0.569, 0.4, 0.585, 0.218, 0.152, 0.113, 0.793, 0.533, 0.599, 0.595, 0.452, 0.476, 0.263, 0.785, 0.81, 0.612, 0.398, 0.259, 0.378, 0.436, 0.343, 0.445, 0.386, 0.363, 0.245, 0.289, 0.308, 0.388, 0.435, 0.299, 0.733, 0.619, 0.538, 0.578, 0.707, 0.455, 0.3, 0.475, 0.471, 0.446, 0.219, 0.351, 0.239, 0.497, 0.448, 0.345, 0.638, 0.252, 0.858, 0.474, 0.615, 0.862, 0.415, 0.754, 0.344, 0.439, 0.69, 0.435, 0.23, 0.683, 0.511, 0.412, 0.128, 0.828, 0.72, 0.589, 0.753, 0.797, 0.346, 0.713, 0.787, 0.568, 0.755, 0.352, 0.517, 0.568, 0.458, 0.439, 0.334, 0.243, 0.513, 0.573, 0.471, 0.667, 0.684, 0.803, 0.199, 0.484, 0.342, 0.596, 0.242, 0.055, 0.653, 0.461, 0.482, 0.549, 0.646, 0.663, 0.285, 0.512, 0.485, 0.248, 0.586, 0.533, 0.881, 0.91, 0.488, 0.478, 0.349, 0.443, 0.679, 0.659, 0.574, 0.482, 0.412, 0.636, 0.484, 0.675, 0.304, 0.68, 0.732, 0.258, 0.358, 0.177, 1.0, 0.975, 0.685, 0.977, 0.777, 0.381, 0.24, 0.305, 0.318, 0.511, 0.415, 0.479, 0.524, 0.562, 0.524, 0.349, 0.389, 0.12, 0.773, 0.426, 0.349, 0.51, 0.423, 0.47, 0.401, 0.323, 0.313, 0.397, 0.656, 0.51, 0.412, 0.576, 0.282, 0.649, 0.291, 0.347, 0.849, 0.68, 0.539, 0.382, 0.596, 0.533, 0.294, 0.703, 0.539, 0.52, 0.581, 0.341, 0.475, 0.577, 0.697, 0.867, 0.629, 0.608, 0.451, 0.278, 0.529, 0.593, 0.448, 0.336, 0.453, 0.44, 0.361, 0.549, 0.408, 0.315, 0.536, 0.584, 0.332, 0.752, 0.394, 0.698, 0.632, 0.896, 0.457, 0.657, 0.319, 0.47, 0.53, 0.95, 0.177, 0.296, 0.465, 0.615, 0.427, 0.43, 0.333]}];
+const au=document.getElementById('au'), wv=document.getElementById('wv'),
+      tr=document.getElementById('tr'), tabs=document.getElementById('tabs'),
+      pp=document.getElementById('pp');
+let k=0, turns=[], ctx=wv.getContext('2d');
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+DATA.forEach((d,i)=>{
+  const b=document.createElement('button');
+  b.textContent=d.motion.length>40?d.motion.slice(0,40)+'…':d.motion;
+  b.onclick=()=>load(i); tabs.appendChild(b);
+});
+
+function draw(){
+  const d=DATA[k], dpr=devicePixelRatio||1;
+  const W=wv.clientWidth, H=wv.clientHeight;
+  if(!W) return;
+  wv.width=W*dpr; wv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  const n=d.pk.length, bw=W/n, mid=H/2;
+  const frac=(au.duration?au.currentTime/d.sec:0);
+  const played=css('--a'), idle=css('--awave');
+  for(let i=0;i<n;i++){
+    const h=Math.max(2,d.pk[i]*(H*0.46));
+    ctx.fillStyle=(i/n)<frac?played:idle;
+    ctx.fillRect(i*bw, mid-h, Math.max(1.1,bw-0.6), h*2);
+  }
+  d.rows.filter(r=>r.k==='t'&&r.c).forEach(r=>{
+    ctx.fillStyle=r.c[0]==='B'?css('--b'):css('--a');
+    ctx.globalAlpha=.85; ctx.fillRect(r.t/d.sec*W-1, 0, 2, H); ctx.globalAlpha=1;
+  });
+  if(au.duration){
+    ctx.fillStyle=css('--ink');
+    ctx.fillRect(Math.min(W-2,frac*W), 0, 2, H);
+  }
+}
+
+function load(i){
+  k=i; const d=DATA[i];
+  [...tabs.children].forEach((b,j)=>b.classList.toggle('on',j===i));
+  document.getElementById('ttl').textContent=d.motion;
+  document.getElementById('meta').textContent=
+    `MOD ${d.nm.MOD} · PRO ${d.nm.PRO} · CON ${d.nm.CON} · ${fmt(d.sec)}`;
+  document.getElementById('tot').textContent=fmt(d.sec);
+  document.getElementById('cur').textContent='0:00';
+  au.src='audio/'+d.id+'.mp3'; pp.textContent='▶';
+  tr.innerHTML=''; turns=[];
+  d.rows.forEach(r=>{
+    if(r.k==='p'){
+      const s=document.createElement('div'); s.className='psep';
+      s.textContent=r.n===1?'phase 1 — opening statements'
+                   :r.n===2?'phase 2 — crossfire':'phase 3 — closing statements';
+      tr.appendChild(s); return;
+    }
+    const el=document.createElement('div'); el.className='tn '+r.s;
+    const fam=r.c&&r.c[0]==='B'?'b':'a';
+    el.innerHTML=`<div class="ts">${fmt(r.t)}</div><div class="bd">`
+      +(r.c?`<span class="cdg ${fam}">${r.c}</span>`:'')
+      +`<span class="who">${r.nm}</span>`
+      +r.x.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      +(r.cut?'<span class="cutm">cut off</span>':'')
+      +(r.dl!=null?`<span class="due">due ${r.dl.toFixed(1)}s</span>`:'')+'</div>';
+    el.onclick=()=>{ au.currentTime=r.t; au.play(); };
+    tr.appendChild(el); turns.push({el,t:r.t,e:r.e});
+  });
+  requestAnimationFrame(draw);
+}
+
+wv.onclick=e=>{ const r=wv.getBoundingClientRect();
+  au.currentTime=(e.clientX-r.left)/r.width*DATA[k].sec; au.play(); };
+pp.onclick=()=>au.paused?au.play():au.pause();
+au.onplay=()=>pp.textContent='❚❚'; au.onpause=()=>pp.textContent='▶';
+au.ontimeupdate=()=>{
+  document.getElementById('cur').textContent=fmt(au.currentTime);
+  draw();
+  let hit=null; for(const x of turns) if(x.t<=au.currentTime&&au.currentTime<x.e) hit=x;
+  turns.forEach(x=>{
+    const was=x.el.classList.contains('on');
+    x.el.classList.toggle('on',x===hit);
+    if(x===hit&&!was) x.el.scrollIntoView({block:'nearest'});
+  });
+};
+addEventListener('resize',draw);
+load(0);
+</script>
+</body>
+</html>
