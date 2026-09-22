@@ -133,9 +133,7 @@ footer a{color:var(--a)}
   <span class="draft">draft · author list not final</span>
   <h1>When Should a Moderator Speak?</h1>
   <p class="subtitle">Benchmarking Policy-Grounded Mediation in Full-Duplex Debates</p>
-  <p class="authors"><span class="au">Dongwook Lee<sup>*</sup></span> · <span class="au">Yunjune Hwang<sup>*</sup></span> · <span class="au">Heeseung Kim</span> · <span class="au">___<sup>†</sup></span> · <span class="au">Sungroh Yoon</span></p>
   <p class="aff">Seoul National University</p>
-  <p class="eq">* Equally contributed. &nbsp; † To be added.</p>
 </header>
 
 <h2><span class="n">01</span>The task</h2>
@@ -149,14 +147,18 @@ right answer is to stay quiet.</p>
   <div class="st c"><b>CON</b><span>against the motion — fixed playback</span></div>
 </div>
 
-<h2><span class="n">02</span>Nine moderator actions</h2>
-<p class="sub"><b>A</b> covers time and the floor, <b>B</b> covers content and only occurs in the
-crossfire. Each action has a condition that must hold; speaking without it costs points, and so does
+<h2><span class="n">02</span>Ten moderator actions</h2>
+<p class="sub"><b>A</b> covers time and the floor, <b>B</b> covers content and can apply throughout the
+debate. Each action has a condition that must hold; speaking without it costs points, and so does
 missing it.</p>
 <div class="cards"><div class="cc a">
   <div class="hd"><span class="cd">A4</span><b>Ten-second cue</b></div>
-  <p class="wh"><span>when</span>A thirty-second statement passes 20 s, or the crossfire reaches 2:20.</p>
+  <p class="wh"><span>when</span>A thirty-second opening or closing statement passes 20 s.</p>
   <p class="do"><span>say</span>Say ten seconds are left, over the speaker, without stopping them.</p>
+</div><div class="cc a">
+  <div class="hd"><span class="cd">A4xf</span><b>Crossfire ten-second cue</b></div>
+  <p class="wh"><span>when</span>The two-and-a-half-minute crossfire reaches 2:20.</p>
+  <p class="do"><span>say</span>Say ten seconds remain in crossfire, without ending the round.</p>
 </div><div class="cc a">
   <div class="hd"><span class="cd">A2-2</span><b>Hand over after a clean finish</b></div>
   <p class="wh"><span>when</span>The speaker finished inside thirty seconds on their own.</p>
@@ -285,9 +287,10 @@ function load(i){
   document.getElementById('tot').textContent=fmt(d.sec);
   document.getElementById('cur').textContent='0:00';
   au.src='audio/'+d.id+'.mp3'; pp.textContent='▶';
-  tr.innerHTML=''; turns=[];
+  tr.innerHTML=''; turns=[]; let phase=1;
   d.rows.forEach(r=>{
     if(r.k==='p'){
+      phase=r.n;
       const s=document.createElement('div'); s.className='psep';
       s.textContent=r.n===1?'phase 1 — opening statements'
                    :r.n===2?'phase 2 — crossfire':'phase 3 — closing statements';
@@ -295,8 +298,9 @@ function load(i){
     }
     const el=document.createElement('div'); el.className='tn '+r.s;
     const fam=r.c&&r.c[0]==='B'?'b':'a';
+    const displayCode=r.c==='A4'&&phase===2?'A4xf':r.c;
     el.innerHTML=`<div class="ts">${fmt(r.t)}</div><div class="bd">`
-      +(r.c?`<span class="cdg ${fam}">${r.c}</span>`:'')
+      +(r.c?`<span class="cdg ${fam}">${displayCode}</span>`:'')
       +`<span class="who">${r.s==='MOD'?'MODERATOR':r.s}</span>`
       +`<span class="nmx">${r.nm}</span>`
       +r.x.replace(/&/g,'&amp;').replace(/</g,'&lt;')
@@ -326,7 +330,7 @@ addEventListener('resize',draw);
 load(0);
 </script>
 
-<script src="assets/gpt-live/report-data.js"></script>
+<script src="assets/gpt-live/report-data.js?v=64f8340f966d"></script>
 <script src="assets/gpt-live/timeline-ui.js"></script>
 <script src="assets/gpt-live/demo.js"></script>
 </body>
