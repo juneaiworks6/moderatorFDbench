@@ -124,6 +124,7 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--ln);
  font-size:12.5px;color:var(--dim);text-align:center}
 footer a{color:var(--a)}
 </style>
+<link rel="stylesheet" href="assets/gpt-live/demo.css">
 </head>
 <body>
 <div class="w">
@@ -211,25 +212,23 @@ their code and the exact second they are due.</p>
   <div class="tr" id="tr"></div>
 </div>
 
-<h2><span class="n">04</span>Model samples</h2>
-<p class="sub">What each model actually said, and when. Seats are reserved below; the moderator
-audio each model produces will be placed here next to the reference, so the two can be heard back
-to back.</p>
-<div class="lbcols">
-  <div>
-    <p class="lbl">closed source</p>
-    <table><thead><tr><th>model</th><th>sample</th><th>timing</th><th>content</th></tr></thead>
-    <tbody><tr><td>GPT Realtime</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Gemini Live</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Claude (voice)</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr></tbody></table>
-  </div>
-  <div>
-    <p class="lbl">open source</p>
-    <table><thead><tr><th>model</th><th>sample</th><th>timing</th><th>content</th></tr></thead>
-    <tbody><tr><td>Moshi</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>PersonaPlex</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>Qwen3-Omni</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr><tr><td>MiniCPM-o</td><td class="tbd">—</td><td class="tbd">—</td><td class="tbd">—</td></tr></tbody></table>
-  </div>
-</div>
-<div class="soon"><b>No model has been run yet.</b>
-The protocol, the rubric and the scoring code are already public — a model's moderator audio is all
-that is missing.</div>
+<section id="live-demo" aria-labelledby="live-demo-title">
+<h2 id="live-demo-title"><span class="n">04</span>Listen to GPT-Live</h2>
+<p class="sub">Choose a debate and explore the moderator’s interventions.</p>
+<section class="panel"><div class="selectors"><label style="display:none">검색<input id="search"></label><label class="sample-label">Choose a debate<select id="debateSel"></select></label><label hidden>Code<select id="codeFilter"><option value="">전체</option></select></label><label hidden>Timing<select id="timingFilter"><option value="">전체</option><option>ON_TIME</option><option>LATE</option><option>PREMATURE</option><option>MISSED</option></select></label></div><div class="identity" id="identity" hidden></div></section>
+<section class="panel ae-player" id="canonical-player" data-ae-root>
+  <div class="ae-toolbar"><label>Listen <select data-ae-mode><option value="stereo">Debaters + GPT-Live</option><option value="model">GPT-Live only</option><option value="input">Debaters only</option></select></label><button type="button" data-ae-back>−5s</button><button type="button" data-ae-forward>+5s</button><span class="ae-clock" data-ae-clock>0:00 / —</span></div>
+  <audio class="ae-audio" data-ae-audio controls preload="metadata"></audio>
+  <canvas class="ae-timeline" data-ae-timeline aria-label="Debater and GPT-Live audio timeline with intervention markers"></canvas>
+  <p class="ae-help">Top: Debaters · Bottom: GPT-Live · Vertical lines: Triggers · Shading: Input pauses<br><span class="phase-legend"><i></i> Opening <i></i> Crossfire <i></i> Closing <i></i> Moderator slots</span></p>
+  <div id="highlights" class="highlights"></div>
+  <nav class="ae-downloads" data-ae-downloads aria-label="오디오와 실제 system prompt"></nav>
+  <div class="ae-evidence-columns" data-ae-evidence><section class="ae-evidence-panel"><h3>Debaters</h3><div class="scroll" data-ae-actual-input></div></section><section class="ae-evidence-panel"><h3>GPT-Live</h3><div class="scroll" data-ae-model-utterances></div></section></div>
+  <section class="ae-evaluation-panel"><h3>Interventions</h3><div class="ae-table-wrap"><table class="ae-expected-table"><thead><tr><th>Time</th><th>Action</th><th>GPT-Live response</th></tr></thead><tbody data-ae-expected-interventions></tbody></table></div></section>
+  <section class="ae-evaluation-panel" hidden><h3>Other moderator speech</h3><div class="ae-table-wrap"><table class="ae-extra-table"><thead><tr><th>듣기</th><th>구분</th><th>판정</th><th>발화 / 이유</th></tr></thead><tbody data-ae-other-model-utterances></tbody></table></div></section>
+</section>
+
+</section>
 
 <footer>
 Data and code: <a href="https://github.com/yoonjune/debate-taxonomy-generator">debate-taxonomy-generator</a><br>
@@ -326,5 +325,9 @@ au.ontimeupdate=()=>{
 addEventListener('resize',draw);
 load(0);
 </script>
+
+<script src="assets/gpt-live/report-data.js"></script>
+<script src="assets/gpt-live/timeline-ui.js"></script>
+<script src="assets/gpt-live/demo.js"></script>
 </body>
 </html>
